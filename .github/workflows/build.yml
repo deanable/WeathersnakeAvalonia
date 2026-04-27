@@ -26,14 +26,8 @@ jobs:
       - name: Publish Windows
         run: dotnet publish -c Release -r win-x64 --self-contained -o ./publish/win-x64 -p:PublishSingleFile=false
 
-      - name: Create MSI Installer
-        run: |
-          mkdir ./publish/msi
-          dotnet tool install --global wix --version 4.0.1 || true
-          $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
-          $wix = (Get-Command wix).Source
-          & $wix heat dir ./publish/win-x64 -o ./publish/msi/WeatherJuice.wxs -v -ag -srd -sreg
-          & $wix build ./publish/msi/WeatherJuice.wxs -d "ProductName=Weather Juice" -d "ProductVersion=1.0.1" -d "Manufacturer=Weather Juice" -d "UpgradeCode=a1b2c3d4-e5f6-7890-abcd-ef1234567890" -o ./publish/msi/WeatherJuice.msi -v
+      - name: Create ZIP
+        run: Compress-Archive -Path ./publish/win-x64/* -DestinationPath ./publish/WeatherJuice-windows-x64.zip -Force
 
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
@@ -41,11 +35,11 @@ jobs:
           name: windows-x64
           path: ./publish/win-x64
 
-      - name: Upload MSI artifact
+      - name: Upload ZIP artifact
         uses: actions/upload-artifact@v4
         with:
-          name: windows-msi
-          path: ./publish/msi/*.msi
+          name: windows-zip
+          path: ./publish/WeatherJuice-windows-x64.zip
 
   build-macos:
     runs-on: macos-latest
@@ -145,8 +139,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            ./artifacts/windows-msi/*.msi
-            ./artifacts/windows-x64/WeathersnakeAvalonia.exe
+            ./artifacts/windows-zip/*.zip
             ./artifacts/macos-pkg/*.pkg
             ./artifacts/macos-universal/WeathersnakeAvalonia
             ./artifacts/linux-x64/WeathersnakeAvalonia
