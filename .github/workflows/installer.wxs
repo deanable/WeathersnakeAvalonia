@@ -8,26 +8,26 @@
         <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
         
         <Feature Id="ProductFeature" Title="Weather Juice" Level="1">
-            <ComponentGroupRef Id="ProductComponents" />
+            <ComponentRef Id="MainExecutable" />
             <ComponentRef Id="ApplicationShortcutDesktop" />
         </Feature>
         
         <StandardDirectory Id="ProgramFilesFolder">
             <Directory Id="INSTALLFOLDER" Name="WeatherJuice">
-                <Component Id="MainExecutable" Guid="*">
+                <Component Id="MainExecutable" Guid="A1B2C3D4-E5F6-7890-ABCD-EF1234567891">
                     <File Id="WeathersnakeExe" Source="publish\win-x64\WeathersnakeAvalonia.exe" KeyPath="yes" />
                 </Component>
             </Directory>
         </StandardDirectory>
         
         <StandardDirectory Id="DesktopFolder">
-            <Component Id="ApplicationShortcutDesktop" Guid="*">
+            <Component Id="ApplicationShortcutDesktop" Guid="A1B2C3D4-E5F6-7890-ABCD-EF1234567892">
                 <Shortcut Id="ApplicationDesktopShortcut"
                           Name="Weather Juice"
                           Description="Historical weather data visualization tool"
                           Target="[INSTALLFOLDER]WeathersnakeAvalonia.exe"
                           WorkingDirectory="INSTALLFOLDER" />
-                </Component>
+            </Component>
         </StandardDirectory>
     </Package>
 </Wix>
