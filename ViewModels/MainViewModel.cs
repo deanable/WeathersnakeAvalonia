@@ -78,15 +78,9 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private ObservableCollection<ProcessedWeatherData> _weatherResults = new();
     
-    [ObservableProperty]
     private string _lastCity = "";
-    
-    [ObservableProperty]
     private string _lastPeriod = "";
-    
-    [ObservableProperty]
     private int _lastDepth;
-
     private string _lastTempUnit = "°C";
     private string _lastPrecipUnit = "mm";
 
@@ -201,9 +195,9 @@ public partial class MainViewModel : ObservableObject
                 throw new InvalidOperationException("No data available for the given timeframe.");
             }
 
-            LastCity = city;
-            LastPeriod = displayPeriod;
-            LastDepth = int.Parse(SelectedDepth);
+            _lastCity = city;
+            _lastPeriod = displayPeriod;
+            _lastDepth = int.Parse(SelectedDepth);
 
             WeatherResults.Clear();
             var tempUnit = SelectedUnits == "imperial" ? "°F" : "°C";
