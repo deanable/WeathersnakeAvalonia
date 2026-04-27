@@ -1,21 +1,23 @@
 using System;
 using System.IO;
 using Avalonia;
-using Avalonia.Styling;
 using Serilog;
-using Serilog.Events;
 
 namespace WeathersnakeAvalonia;
 
 class Program
 {
+#if WINDOWS
     [STAThread]
+#endif
     public static void Main(string[] args)
     {
-        var logFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), 
-            "WeathersnakeAvalonia", "weathersnake.log");
+        var logDir = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "WeathersnakeAvalonia");
         
-        Directory.CreateDirectory(Path.GetDirectoryName(logFile)!);
+        Directory.CreateDirectory(logDir);
+        var logFile = Path.Combine(logDir, "weathersnake.log");
         
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Debug()
