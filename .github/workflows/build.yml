@@ -107,11 +107,21 @@ jobs:
         run: |
           productbuild --component ./publish/Universal.app /Applications --product .github/workflows/Info.plist ./publish/WeatherJuice.pkg
 
+      - name: Create ZIP
+        run: |
+          cd ./publish && zip -r WeatherJuice-macos.zip Universal.app
+
       - name: Upload macOS artifact
         uses: actions/upload-artifact@v4
         with:
           name: macos-universal
           path: ./publish/Universal.app
+
+      - name: Upload ZIP artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-zip
+          path: ./publish/WeatherJuice-macos.zip
 
       - name: Upload PKG artifact
         uses: actions/upload-artifact@v4
@@ -164,6 +174,7 @@ jobs:
           files: |
             ./artifacts/windows-installer/*.exe
             ./artifacts/macos-pkg/*.pkg
+            ./artifacts/macos-zip/*.zip
             ./artifacts/macos-universal/WeathersnakeAvalonia
             ./artifacts/linux-x64/WeathersnakeAvalonia
           generate_release_notes: true
