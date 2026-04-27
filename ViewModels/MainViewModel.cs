@@ -437,6 +437,17 @@ public partial class MainViewModel : ObservableObject
         legendPaint.Color = new SkiaSharp.SKColor(80, 80, 255);
         canvas.DrawText("▮ Precip (" + precipUnit + ")", margin + 320, height - 50, legendPaint);
 
+        // Watermark in bottom-left corner
+        var watermarkPaint = new SkiaSharp.SKPaint
+        {
+            Color = SkiaSharp.SKColors.LightGray,
+            TextSize = 10,
+            IsAntialias = true,
+            Typeface = SkiaSharp.SKTypeface.FromFamilyName("Arial")
+        };
+        var watermarkText = "Weather Juice v1.0";
+        canvas.DrawText(watermarkText, margin, height - 10, watermarkPaint);
+
         var data_jpeg = bitmap.Encode(SkiaSharp.SKEncodedImageFormat.Jpeg, 90);
         var bytes = data_jpeg.ToArray();
         System.IO.File.WriteAllBytes(path, bytes);
