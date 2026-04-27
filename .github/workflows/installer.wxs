@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+    <Package Name="Weather Juice"
+             Manufacturer="Weather Juice"
+             Version="1.0.1.0"
+             UpgradeCode="a1b2c3d4-e5f6-7890-abcd-ef1234567890">
+        
+        <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+        
+        <Feature Id="ProductFeature" Title="Weather Juice" Level="1">
+            <ComponentGroupRef Id="ProductComponents" />
+            <ComponentRef Id="ApplicationShortcutDesktop" />
+        </Feature>
+        
+        <StandardDirectory Id="ProgramFilesFolder">
+            <Directory Id="INSTALLFOLDER" Name="WeatherJuice">
+                <Component Id="MainExecutable" Guid="*">
+                    <File Id="WeathersnakeExe" Source="publish\win-x64\WeathersnakeAvalonia.exe" KeyPath="yes" />
+                </Component>
+            </Directory>
+        </StandardDirectory>
+        
+        <StandardDirectory Id="DesktopFolder">
+            <Component Id="ApplicationShortcutDesktop" Guid="*">
+                <Shortcut Id="ApplicationDesktopShortcut"
+                          Name="Weather Juice"
+                          Description="Historical weather data visualization tool"
+                          Target="[INSTALLFOLDER]WeathersnakeAvalonia.exe"
+                          WorkingDirectory="INSTALLFOLDER" />
+                </Component>
+        </StandardDirectory>
+    </Package>
+</Wix>

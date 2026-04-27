@@ -24,13 +24,34 @@ jobs:
         run: dotnet build -c Release --no-restore
 
       - name: Publish Windows
-        run: dotnet publish -c Release -r win-x64 --self-contained -o ./publish/win-x64
+        run: dotnet publish -c Release -r win-x64 --self-contained -o ./publish/win-x64 -p:PublishSingleFile=false
+
+      - name: Create MSI Installer
+        run: |
+          dotnet tool install --global wix --version 5.0.0 || true
+          $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+          $wix = (Get-Command wix).Source
+          & $wix build `
+            --output ./publish/msi `
+            --arch x64 `
+            --define "ProductName=Weather Juice" `
+            --define "ProductVersion=1.0.1" `
+            --define "Manufacturer=Weather Juice" `
+            --define "ProductId=*" `
+            --define "UpgradeCode=a1b2c3d4-e5f6-7890-abcd-ef1234567890" `
+            -v .github/workflows/installer.wxs
 
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
         with:
           name: windows-x64
           path: ./publish/win-x64
+
+      - name: Upload MSI artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-msi
+          path: ./publish/msi/*.msi
 
   build-macos:
     runs-on: macos-latest
@@ -61,11 +82,30 @@ jobs:
           mkdir -p ./publish/Universal.app/Contents/MacOS
           cp ./publish/Universal/WeathersnakeAvalonia ./publish/Universal.app/Contents/MacOS/
 
+      - name: Copy icon
+        run: |
+          cp Assets/logo.ico ./publish/Universal.app/Contents/Resources/WeathersnakeAvalonia.ico
+
+      - name: Copy Info.plist
+        run: |
+          mkdir -p ./publish/Universal.app/Contents
+          cp .github/workflows/Info.plist ./publish/Universal.app/Contents/Info.plist
+
+      - name: Create PKG Installer
+        run: |
+          productbuild --component ./publish/Universal.app /Applications --product .github/workflows/Info.plist ./publish/WeatherJuice.pkg
+
       - name: Upload macOS artifact
         uses: actions/upload-artifact@v4
         with:
           name: macos-universal
           path: ./publish/Universal.app
+
+      - name: Upload PKG artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-pkg
+          path: ./publish/WeatherJuice.pkg
 
   build-linux:
     runs-on: ubuntu-latest
