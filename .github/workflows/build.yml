@@ -28,18 +28,11 @@ jobs:
 
       - name: Create MSI Installer
         run: |
+          mkdir ./publish/msi
           dotnet tool install --global wix --version 5.0.0 || true
           $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
           $wix = (Get-Command wix).Source
-          & $wix build `
-            --output ./publish/msi `
-            --arch x64 `
-            --define "ProductName=Weather Juice" `
-            --define "ProductVersion=1.0.1" `
-            --define "Manufacturer=Weather Juice" `
-            --define "ProductId=*" `
-            --define "UpgradeCode=a1b2c3d4-e5f6-7890-abcd-ef1234567890" `
-            -v .github/workflows/installer.wxs
+          & $wix build .github/workflows/installer.wxs -d "ProductName=Weather Juice" -d "ProductVersion=1.0.1" -d "Manufacturer=Weather Juice" -d "ProductId=*" -d "UpgradeCode=a1b2c3d4-e5f6-7890-abcd-ef1234567890" -o ./publish/msi/WeatherJuice.msi -v
 
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
@@ -84,6 +77,7 @@ jobs:
 
       - name: Copy icon
         run: |
+          mkdir -p ./publish/Universal.app/Contents/Resources
           cp Assets/logo.ico ./publish/Universal.app/Contents/Resources/WeathersnakeAvalonia.ico
 
       - name: Copy Info.plist
