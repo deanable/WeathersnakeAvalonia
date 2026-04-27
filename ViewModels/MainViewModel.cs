@@ -434,13 +434,24 @@ public partial class MainViewModel : ObservableObject
         // Watermark in bottom-left corner
         var watermarkPaint = new SkiaSharp.SKPaint
         {
-            Color = SkiaSharp.SKColors.LightGray,
+            Color = new SkiaSharp.SKColor(200, 200, 200, 128),
             TextSize = 10,
             IsAntialias = true,
             Typeface = SkiaSharp.SKTypeface.FromFamilyName("Arial")
         };
-        var watermarkText = "Weather Juice v1.0";
+        var watermarkText = "Weather Juice v1.0.1";
         canvas.DrawText(watermarkText, margin, height - 10, watermarkPaint);
+
+        var logoPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "logo.png");
+        if (File.Exists(logoPath))
+        {
+            using var logoBitmap = SkiaSharp.SKBitmap.Decode(logoPath);
+            if (logoBitmap != null)
+            {
+                var logoDest = new SkiaSharp.SKRect(0, height - 16, 16, height);
+                canvas.DrawBitmap(logoBitmap, logoDest);
+            }
+        }
 
         var data_jpeg = bitmap.Encode(SkiaSharp.SKEncodedImageFormat.Jpeg, 90);
         var bytes = data_jpeg.ToArray();

@@ -3,7 +3,7 @@
         xmlns:vm="using:WeathersnakeAvalonia.ViewModels"
         xmlns:models="using:WeathersnakeAvalonia.Models"
         xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
-        Title="Weather Juice v1.0"
+        Title="Weather Juice v1.0.1"
         Width="1100"
         Height="700"
         x:Class="WeathersnakeAvalonia.Views.MainWindow"
