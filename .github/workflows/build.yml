@@ -38,11 +38,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: windows-x64
-          path: |
-            ./publish/win-x64/WeathersnakeAvalonia.exe
-            ./publish/win-x64/*.dll
-            ./publish/win-x64/*.json
-            ./publish/win-x64/*.pdb
+          path: ./publish/win-x64
 
       - name: Upload MSI artifact
         uses: actions/upload-artifact@v4
@@ -99,6 +95,12 @@ jobs:
           name: macos-universal
           path: ./publish/Universal.app
 
+      - name: Upload PKG artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-pkg
+          path: ./publish/WeatherJuice.pkg
+
   build-linux:
     runs-on: ubuntu-latest
     steps:
@@ -122,12 +124,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: linux-x64
-          path: |
-            ./publish/linux-x64/WeathersnakeAvalonia
-            ./publish/linux-x64/*.dll
-            ./publish/linux-x64/*.json
-            ./publish/linux-x64/*.pdb
-            ./publish/linux-x64/*.so
+          path: ./publish/linux-x64
 
   release:
     needs: [build-windows, build-macos, build-linux]
@@ -146,7 +143,12 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-          files: ./artifacts/**/*
+          files: |
+            ./artifacts/windows-msi/*.msi
+            ./artifacts/windows-x64/WeathersnakeAvalonia.exe
+            ./artifacts/macos-pkg/*.pkg
+            ./artifacts/macos-universal/WeathersnakeAvalonia
+            ./artifacts/linux-x64/WeathersnakeAvalonia
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
