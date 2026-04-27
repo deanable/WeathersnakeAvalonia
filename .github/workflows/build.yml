@@ -29,7 +29,7 @@ jobs:
       - name: Create MSI Installer
         run: |
           mkdir ./publish/msi
-          dotnet tool install --global wix --version 5.0.0 || true
+          dotnet tool install --global wix --version 4.0.1 || true
           $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
           $wix = (Get-Command wix).Source
           & $wix heat dir ./publish/win-x64 -o ./publish/msi/WeatherJuice.wxs -v -ag -srd -sreg
