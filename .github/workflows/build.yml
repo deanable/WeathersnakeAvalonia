@@ -26,8 +26,31 @@ jobs:
       - name: Publish Windows
         run: dotnet publish -c Release -r win-x64 --self-contained -o ./publish/win-x64 -p:PublishSingleFile=false
 
-      - name: Create ZIP
-        run: Compress-Archive -Path ./publish/win-x64/* -DestinationPath ./publish/WeatherJuice-windows-x64.zip -Force
+      - name: Create Inno Setup Script
+        run: |
+          $issContent = @"
+          [Setup]
+          AppName=Weather Juice
+          AppVersion=1.0.1
+          DefaultDirName={autopf}\WeatherJuice
+          DefaultGroupName=Weather Juice
+          OutputDir=.\publish\inno
+          OutputBaseFilename=WeatherJuice
+          Compression=lzma2
+          ArchitecturesAllowed=x64
+          ArchitecturesInstallIn64BitMode=x64
+          [Files]
+          Source: ".\publish\win-x64\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
+          [Icons]
+          Name: "{group}\Weather Juice"; Filename: "{app}\WeathersnakeAvalonia.exe"
+          Name: "{commondesktop}\Weather Juice"; Filename: "{app}\WeathersnakeAvalonia.exe"
+          "@
+          $issContent | Out-File -FilePath inno.iss -Encoding UTF8
+
+      - name: Create Windows Installer
+        run: |
+          choco install innosetup -y
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" inno.iss
 
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
@@ -35,11 +58,11 @@ jobs:
           name: windows-x64
           path: ./publish/win-x64
 
-      - name: Upload ZIP artifact
+      - name: Upload Installer artifact
         uses: actions/upload-artifact@v4
         with:
-          name: windows-zip
-          path: ./publish/WeatherJuice-windows-x64.zip
+          name: windows-installer
+          path: ./publish/inno/*.exe
 
   build-macos:
     runs-on: macos-latest
@@ -139,7 +162,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            ./artifacts/windows-zip/*.zip
+            ./artifacts/windows-installer/*.exe
             ./artifacts/macos-pkg/*.pkg
             ./artifacts/macos-universal/WeathersnakeAvalonia
             ./artifacts/linux-x64/WeathersnakeAvalonia
