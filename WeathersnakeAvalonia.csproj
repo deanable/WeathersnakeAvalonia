@@ -8,7 +8,8 @@
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <AssemblyName>WeathersnakeAvalonia</AssemblyName>
     <RootNamespace>WeathersnakeAvalonia</RootNamespace>
-    <Version>1.0.2</Version>
+    <ApplicationIcon>Assets\logo.ico</ApplicationIcon>
+    <Version>1.0.3</Version>
     <Authors>WeatherSnake Team</Authors>
     <Description>Historical weather data visualization tool</Description>
     <Copyright>Copyright 2026</Copyright>
@@ -43,5 +44,6 @@
   <ItemGroup>
     <AvaloniaResource Include="Assets\logo.ico"/>
     <AvaloniaResource Include="Assets\logo.png"/>
+    <AvaloniaResource Include="Assets\logo.icns"/>
   </ItemGroup>
 </Project>

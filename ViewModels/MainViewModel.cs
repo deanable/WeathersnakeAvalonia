@@ -2,6 +2,8 @@ using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Reflection;
+using Avalonia.Platform;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LiveChartsCore;
@@ -442,18 +444,17 @@ public partial class MainViewModel : ObservableObject
             IsAntialias = true,
             Typeface = SkiaSharp.SKTypeface.FromFamilyName("Arial")
         };
-        var watermarkText = "Weather Juice v1.0.1";
+        var watermarkText = "Weather Juice v1.0.3";
         canvas.DrawText(watermarkText, margin, height - 10, watermarkPaint);
 
-        var logoPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "logo.png");
-        if (File.Exists(logoPath))
+        var logoUri = new Uri("avares://WeathersnakeAvalonia/Assets/logo.png");
+        using var logoStream = AssetLoader.Open(logoUri);
+        using var logoBitmap = SkiaSharp.SKBitmap.Decode(logoStream);
+        if (logoBitmap != null)
         {
-            using var logoBitmap = SkiaSharp.SKBitmap.Decode(logoPath);
-            if (logoBitmap != null)
-            {
-                var logoDest = new SkiaSharp.SKRect(0, height - 16, 16, height);
-                canvas.DrawBitmap(logoBitmap, logoDest);
-            }
+            var logoDest = new SkiaSharp.SKRect(0, height - 20, 20, height);
+            using var resizedLogo = logoBitmap.Resize(new SkiaSharp.SKImageInfo(20, 20), SkiaSharp.SKFilterQuality.Medium);
+            canvas.DrawBitmap(resizedLogo, logoDest);
         }
 
         var data_jpeg = bitmap.Encode(SkiaSharp.SKEncodedImageFormat.Jpeg, 90);
