@@ -1,6 +1,8 @@
 using System;
 using System.IO;
 using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Platform;
 using Serilog;
 
 namespace WeathersnakeAvalonia;
@@ -45,7 +47,25 @@ class Program
     }
 
     public static AppBuilder BuildAvaloniaApp()
-        => AppBuilder.Configure<App>()
+    {
+        var builder = AppBuilder.Configure<App>()
             .UsePlatformDetect()
             .LogToTrace();
+
+        var iconPath = OperatingSystem.IsMacOS()
+            ? "avares://WeathersnakeAvalonia/Assets/logo.icns"
+            : "avares://WeathersnakeAvalonia/Assets/logo.ico";
+        
+        try
+        {
+            var iconStream = AssetLoader.Open(new Uri(iconPath));
+            if (iconStream != null)
+            {
+                builder.With(new WindowIcon(iconStream));
+            }
+        }
+        catch { }
+
+        return builder;
+    }
 }

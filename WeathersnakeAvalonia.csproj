@@ -9,7 +9,7 @@
     <AssemblyName>WeathersnakeAvalonia</AssemblyName>
     <RootNamespace>WeathersnakeAvalonia</RootNamespace>
     <ApplicationIcon>Assets\logo.ico</ApplicationIcon>
-    <Version>1.0.20</Version>
+    <Version>1.0.21</Version>
     <Authors>WeatherSnake Team</Authors>
     <Description>Historical weather data visualization tool</Description>
     <Copyright>Copyright 2026</Copyright>
