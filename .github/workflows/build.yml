@@ -132,33 +132,8 @@ jobs:
           name: macos-pkg
           path: ./publish/WeatherJuice.pkg
 
-  build-linux:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.0.x'
-
-      - name: Restore dependencies
-        run: dotnet restore
-
-      - name: Build
-        run: dotnet build -c Release --no-restore
-
-      - name: Publish Linux
-        run: dotnet publish -c Release -r linux-x64 --self-contained -o ./publish/linux-x64
-
-      - name: Upload Linux artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: linux-x64
-          path: ./publish/linux-x64
-
   release:
-    needs: [build-windows, build-macos, build-linux]
+    needs: [build-windows, build-macos]
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
     permissions:
@@ -179,7 +154,6 @@ jobs:
             ./artifacts/macos-pkg/*.pkg
             ./artifacts/macos-zip/*.zip
             ./artifacts/macos-universal/WeatherJuice.app
-            ./artifacts/linux-x64/WeathersnakeAvalonia
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
