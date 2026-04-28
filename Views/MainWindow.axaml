@@ -55,6 +55,7 @@
                     </StackPanel>
 
                     <CheckBox Content="Monthly Average" IsChecked="{Binding MonthlyAverage}"/>
+                    <CheckBox Content="Rain Only" IsChecked="{Binding RainOnly}"/>
                     <CheckBox Content="Shared Y-Axis" IsChecked="{Binding SharedYAxis}"/>
                 </WrapPanel>
 

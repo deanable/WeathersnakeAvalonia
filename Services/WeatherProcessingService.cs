@@ -15,7 +15,8 @@ public interface IWeatherProcessingService
         bool monthly,
         (int month, int day)? customStart,
         (int month, int day)? customEnd,
-        double precipThreshold = 0.0);
+        double precipThreshold = 0.0,
+        bool rainOnly = false);
     
     int CustomRangeDays(int startMonth, int startDay, int endMonth, int endDay);
 }
@@ -40,10 +41,11 @@ public class WeatherProcessingService : IWeatherProcessingService
         bool monthly,
         (int month, int day)? customStart,
         (int month, int day)? customEnd,
-        double precipThreshold = 0.0)
+        double precipThreshold = 0.0,
+        bool rainOnly = false)
     {
         var isCustom = customStart.HasValue && customEnd.HasValue;
-        Log.Debug("Processing weather data: period={Period}, units={Units}, monthly={Monthly}, custom={IsCustom}", period, units, monthly, isCustom);
+        Log.Debug("Processing weather data: period={Period}, units={Units}, monthly={Monthly}, custom={IsCustom}, rainOnly={RainOnly}", period, units, monthly, isCustom, rainOnly);
 
         var daily = rawData.Daily;
         var count = daily.Time.Count;
@@ -104,23 +106,44 @@ public class WeatherProcessingService : IWeatherProcessingService
         
         if (monthly)
         {
-            var grouped = records
-                .GroupBy(r => r.Date.Month)
-                .Select(g => new
-                {
-                    Month = g.Key,
-                    TempMax = g.Average(r => r.TempMax),
-                    TempMin = g.Average(r => r.TempMin),
-                    PrecipSum = g.Average(r => r.PrecipSum)
-                })
-                .OrderBy(x => x.Month >= startMonth ? x.Month : x.Month + 12)
-                .ToList();
+            List<(int Month, double TempMax, double TempMin, double PrecipSum, int Days)> grouped;
+            
+            if (rainOnly)
+            {
+                grouped = records
+                    .Where(r => r.PrecipSum > 0)
+                    .GroupBy(r => r.Date.Month)
+                    .Select(g => (
+                        Month: g.Key,
+                        TempMax: g.Average(r => r.TempMax),
+                        TempMin: g.Average(r => r.TempMin),
+                        PrecipSum: g.Average(r => r.PrecipSum),
+                        Days: g.Count()
+                    ))
+                    .OrderBy(x => x.Month >= startMonth || startMonth > 12 ? x.Month : x.Month + 12)
+                    .ToList();
+            }
+            else
+            {
+                grouped = records
+                    .GroupBy(r => r.Date.Month)
+                    .Select(g => (
+                        Month: g.Key,
+                        TempMax: g.Average(r => r.TempMax),
+                        TempMin: g.Average(r => r.TempMin),
+                        PrecipSum: g.Average(r => r.PrecipSum),
+                        Days: g.Count()
+                    ))
+                    .OrderBy(x => x.Month >= startMonth || startMonth > 12 ? x.Month : x.Month + 12)
+                    .ToList();
+            }
             
             foreach (var g in grouped)
             {
+                var label = rainOnly && g.Days > 0 ? $"{MonthNames[g.Month]} ({g.Days}d)" : MonthNames[g.Month];
                 result.Add(new ProcessedWeatherData
                 {
-                    DateLabel = MonthNames[g.Month],
+                    DateLabel = label,
                     TempMax = g.TempMax,
                     TempMin = g.TempMin,
                     PrecipSum = g.PrecipSum

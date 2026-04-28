@@ -37,6 +37,9 @@ public partial class MainViewModel : ObservableObject
     private bool _monthlyAverage = true;
     
     [ObservableProperty]
+    private bool _rainOnly;
+    
+    [ObservableProperty]
     private bool _sharedYAxis = true;
     
     [ObservableProperty]
@@ -188,7 +191,7 @@ public partial class MainViewModel : ObservableObject
             StatusText = "Processing...";
 
             var processedData = _processingService.ProcessWeatherData(
-                rawData, SelectedPeriod, SelectedUnits, monthly, customStart, customEnd, PrecipThreshold);
+                rawData, SelectedPeriod, SelectedUnits, monthly, customStart, customEnd, PrecipThreshold, RainOnly);
 
             if (processedData.Count == 0)
             {
