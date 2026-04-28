@@ -88,10 +88,10 @@ jobs:
 
       - name: Create universal binary
         run: |
-          mkdir -p ./publish/Universal
-          lipo -create ./publish/osx-x64/WeathersnakeAvalonia ./publish/osx-arm64/WeathersnakeAvalonia -output ./publish/Universal/WeathersnakeAvalonia
           mkdir -p ./publish/Universal.app/Contents/MacOS
-          cp ./publish/Universal/WeathersnakeAvalonia ./publish/Universal.app/Contents/MacOS/
+          cp -r ./publish/osx-x64/* ./publish/Universal.app/Contents/MacOS/
+          lipo -create ./publish/osx-x64/WeathersnakeAvalonia ./publish/osx-arm64/WeathersnakeAvalonia -output ./publish/Universal.app/Contents/MacOS/WeathersnakeAvalonia
+          chmod +x ./publish/Universal.app/Contents/MacOS/WeathersnakeAvalonia
 
       - name: Copy icon
         run: |
