@@ -88,34 +88,62 @@ jobs:
 
       - name: Create universal binary
         run: |
-          mkdir -p ./publish/Universal.app/Contents/MacOS
-          cp -r ./publish/osx-x64/* ./publish/Universal.app/Contents/MacOS/
-          lipo -create ./publish/osx-x64/WeathersnakeAvalonia ./publish/osx-arm64/WeathersnakeAvalonia -output ./publish/Universal.app/Contents/MacOS/WeathersnakeAvalonia
-          chmod +x ./publish/Universal.app/Contents/MacOS/WeathersnakeAvalonia
+          mkdir -p ./publish/WeatherJuice.app/Contents/MacOS
+          cp -r ./publish/osx-x64/* ./publish/WeatherJuice.app/Contents/MacOS/
+          lipo -create ./publish/osx-x64/WeathersnakeAvalonia ./publish/osx-arm64/WeathersnakeAvalonia -output ./publish/WeatherJuice.app/Contents/MacOS/WeathersnakeAvalonia
+          chmod +x ./publish/WeatherJuice.app/Contents/MacOS/WeathersnakeAvalonia
 
       - name: Copy icon
         run: |
-          mkdir -p ./publish/Universal.app/Contents/Resources
-          cp Assets/logo.ico ./publish/Universal.app/Contents/Resources/WeathersnakeAvalonia.ico
+          mkdir -p ./publish/WeatherJuice.app/Contents/Resources
+          cp Assets/logo.ico ./publish/WeatherJuice.app/Contents/Resources/WeatherJuice.ico
+          cp Assets/logo.png ./publish/WeatherJuice.app/Contents/Resources/WeatherJuice.png
+          # Convert PNG to ICNS for macOS
+          mkdir -p icon.iconset
+          cp Assets/logo.png icon.iconset/icon_512x512.png
+          cp Assets/logo.png icon.iconset/icon_256x256.png
+          cp Assets/logo.png icon.iconset/icon_128x128.png
+          cp Assets/logo.png icon.iconset/icon_64x64.png
+          cp Assets/logo.png icon.iconset/icon_32x32.png
+          cp Assets/logo.png icon.iconset/icon_16x16.png
+          cat > icon.iconset/Contents.json << 'EOF'
+          {
+            "images": [
+              {"filename": "icon_16x16.png", "idiom": "mac", "size": "16x16", "scale": "1x"},
+              {"filename": "icon_16x16.png", "idiom": "mac", "size": "16x16", "scale": "2x"},
+              {"filename": "icon_32x32.png", "idiom": "mac", "size": "32x32", "scale": "1x"},
+              {"filename": "icon_32x32.png", "idiom": "mac", "size": "32x32", "scale": "2x"},
+              {"filename": "icon_128x128.png", "idiom": "mac", "size": "128x128", "scale": "1x"},
+              {"filename": "icon_128x128.png", "idiom": "mac", "size": "128x128", "scale": "2x"},
+              {"filename": "icon_256x256.png", "idiom": "mac", "size": "256x256", "scale": "1x"},
+              {"filename": "icon_256x256.png", "idiom": "mac", "size": "256x256", "scale": "2x"},
+              {"filename": "icon_512x512.png", "idiom": "mac", "size": "512x512", "scale": "1x"},
+              {"filename": "icon_512x512.png", "idiom": "mac", "size": "512x512", "scale": "2x"}
+            ],
+            "info": {"version": 1, "author": "xcode"}
+          }
+          EOF
+          iconutil -c icns icon.iconset -o ./publish/WeatherJuice.app/Contents/Resources/WeatherJuice.icns
+          rm -rf icon.iconset
 
       - name: Copy Info.plist
         run: |
-          mkdir -p ./publish/Universal.app/Contents
-          cp .github/workflows/Info.plist ./publish/Universal.app/Contents/Info.plist
+          mkdir -p ./publish/WeatherJuice.app/Contents
+          cp .github/workflows/Info.plist ./publish/WeatherJuice.app/Contents/Info.plist
 
       - name: Create PKG Installer
         run: |
-          productbuild --component ./publish/Universal.app /Applications --product .github/workflows/Info.plist ./publish/WeatherJuice.pkg
+          productbuild --component ./publish/WeatherJuice.app /Applications --product .github/workflows/Info.plist ./publish/WeatherJuice.pkg
 
       - name: Create ZIP
         run: |
-          cd ./publish && zip -r WeatherJuice-macos.zip Universal.app
+          cd ./publish && zip -r WeatherJuice-macos.zip WeatherJuice.app
 
       - name: Upload macOS artifact
         uses: actions/upload-artifact@v4
         with:
           name: macos-universal
-          path: ./publish/Universal.app
+          path: ./publish/WeatherJuice.app
 
       - name: Upload ZIP artifact
         uses: actions/upload-artifact@v4
@@ -175,7 +203,7 @@ jobs:
             ./artifacts/windows-installer/*.exe
             ./artifacts/macos-pkg/*.pkg
             ./artifacts/macos-zip/*.zip
-            ./artifacts/macos-universal/WeathersnakeAvalonia
+            ./artifacts/macos-universal/WeatherJuice.app
             ./artifacts/linux-x64/WeathersnakeAvalonia
           generate_release_notes: true
         env:
