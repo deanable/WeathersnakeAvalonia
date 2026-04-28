@@ -98,33 +98,8 @@ jobs:
           mkdir -p ./publish/WeatherJuice.app/Contents/Resources
           cp Assets/logo.ico ./publish/WeatherJuice.app/Contents/Resources/WeatherJuice.ico
           cp Assets/logo.png ./publish/WeatherJuice.app/Contents/Resources/WeatherJuice.png
-          # Convert PNG to ICNS for macOS
-          mkdir -p icon.iconset
-          cp Assets/logo.png icon.iconset/icon_512x512.png
-          cp Assets/logo.png icon.iconset/icon_256x256.png
-          cp Assets/logo.png icon.iconset/icon_128x128.png
-          cp Assets/logo.png icon.iconset/icon_64x64.png
-          cp Assets/logo.png icon.iconset/icon_32x32.png
-          cp Assets/logo.png icon.iconset/icon_16x16.png
-          cat > icon.iconset/Contents.json << 'EOF'
-          {
-            "images": [
-              {"filename": "icon_16x16.png", "idiom": "mac", "size": "16x16", "scale": "1x"},
-              {"filename": "icon_16x16.png", "idiom": "mac", "size": "16x16", "scale": "2x"},
-              {"filename": "icon_32x32.png", "idiom": "mac", "size": "32x32", "scale": "1x"},
-              {"filename": "icon_32x32.png", "idiom": "mac", "size": "32x32", "scale": "2x"},
-              {"filename": "icon_128x128.png", "idiom": "mac", "size": "128x128", "scale": "1x"},
-              {"filename": "icon_128x128.png", "idiom": "mac", "size": "128x128", "scale": "2x"},
-              {"filename": "icon_256x256.png", "idiom": "mac", "size": "256x256", "scale": "1x"},
-              {"filename": "icon_256x256.png", "idiom": "mac", "size": "256x256", "scale": "2x"},
-              {"filename": "icon_512x512.png", "idiom": "mac", "size": "512x512", "scale": "1x"},
-              {"filename": "icon_512x512.png", "idiom": "mac", "size": "512x512", "scale": "2x"}
-            ],
-            "info": {"version": 1, "author": "xcode"}
-          }
-          EOF
-          iconutil -c icns icon.iconset -o ./publish/WeatherJuice.app/Contents/Resources/WeatherJuice.icns
-          rm -rf icon.iconset
+          # For macOS, we need a proper PNG - use sips to ensure compatibility
+          sips -s format png Assets/logo.png --out ./publish/WeatherJuice.app/Contents/Resources/WeatherJuice.png
 
       - name: Copy Info.plist
         run: |
