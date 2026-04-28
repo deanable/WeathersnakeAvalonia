@@ -444,7 +444,7 @@ public partial class MainViewModel : ObservableObject
             IsAntialias = true,
             Typeface = SkiaSharp.SKTypeface.FromFamilyName("Arial")
         };
-        var watermarkText = "Weather Juice v1.0.22";
+        var watermarkText = "Weather Juice v1.0.23";
         canvas.DrawText(watermarkText, margin, height - 10, watermarkPaint);
 
         var logoUri = new Uri("avares://WeathersnakeAvalonia/Assets/logo.png");

@@ -96,10 +96,9 @@ jobs:
       - name: Copy icon
         run: |
           mkdir -p ./publish/WeatherJuice.app/Contents/Resources
+          cp Assets/logo.icns ./publish/WeatherJuice.app/Contents/Resources/WeatherJuice.icns
           cp Assets/logo.ico ./publish/WeatherJuice.app/Contents/Resources/WeatherJuice.ico
           cp Assets/logo.png ./publish/WeatherJuice.app/Contents/Resources/WeatherJuice.png
-          # For macOS, we need a proper PNG - use sips to ensure compatibility
-          sips -s format png Assets/logo.png --out ./publish/WeatherJuice.app/Contents/Resources/WeatherJuice.png
 
       - name: Copy Info.plist
         run: |

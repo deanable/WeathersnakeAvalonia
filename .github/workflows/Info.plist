@@ -7,15 +7,15 @@
     <key>CFBundleName</key>
     <string>Weather Juice</string>
     <key>CFBundleVersion</key>
-    <string>1.0.22</string>
+    <string>1.0.23</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.0.22</string>
+    <string>1.0.23</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleExecutable</key>
     <string>WeathersnakeAvalonia</string>
     <key>CFBundleIconFile</key>
-    <string>WeathersnakeAvalonia.icns</string>
+    <string>WeatherJuice.icns</string>
     <key>LSMinimumSystemVersion</key>
     <string>10.15</string>
     <key>NSHighResolutionCapable</key>
