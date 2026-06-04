@@ -15,7 +15,10 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: '10.0.x'
+
+      - name: Add LiveCharts dev feed
+        run: dotnet nuget add source https://pkgs.dev.azure.com/beto-rodriguez/LiveCharts/_packaging/livecharts/nuget/v3/index.json -n livecharts-dev
 
       - name: Restore dependencies
         run: dotnet restore
@@ -28,10 +31,11 @@ jobs:
 
       - name: Create Inno Setup Script
         run: |
+          $appVersion = $env:GITHUB_REF_NAME -replace '^v', ''
           $issContent = @"
           [Setup]
           AppName=Weather Juice
-          AppVersion=1.0.1
+          AppVersion=$appVersion
           DefaultDirName={autopf}\WeatherJuice
           DefaultGroupName=Weather Juice
           OutputDir=.\publish\inno
@@ -72,7 +76,10 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: '10.0.x'
+
+      - name: Add LiveCharts dev feed
+        run: dotnet nuget add source https://pkgs.dev.azure.com/beto-rodriguez/LiveCharts/_packaging/livecharts/nuget/v3/index.json -n livecharts-dev
 
       - name: Restore dependencies
         run: dotnet restore
